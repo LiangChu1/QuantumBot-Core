@@ -39,13 +39,18 @@ These instructions will get you a copy of the project up and running on your loc
 
 The project includes the following Firebase Cloud Functions:
 
+### user session management APIs
 - `login`: Logs in a user.
 - `logout`: Logs out a user.
 - `register`: Registers a new user.
 - `updateUserId`: Updates a user's ID.
+
+### message recepition APIs
 - `postMessage`: Posts a new message to a chat.
 - `getChat`: Retrieves all messages from a specific chat of a specific user.
 - `deleteChat`: Deletes all messages from a specific chat of a specific user.
+
+### log management APIs
 - `postLogs`: Posts a new log event for monitoring and troubleshooting.
 - `updateLogs`: Updates an existing log event.
 - `deleteLogs`: Deletes a log event  based on its id.
