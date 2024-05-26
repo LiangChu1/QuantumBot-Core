@@ -14,7 +14,9 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 - Node.js and npm
-- Firebase account and CLI
+- Firebase CLI
+- Firebase Functions
+- Firebase Firestore Database
 - Postman
 
 ### Installing
