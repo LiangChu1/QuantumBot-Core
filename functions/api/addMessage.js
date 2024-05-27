@@ -6,7 +6,7 @@ const admin = require("firebase-admin");
 const {logger} = functions;
 
 /**
- * Cloud Function to add a message to a chat.
+ * Cloud Function to add a message to a chat. (code given in task 3)
  * @param {Object} data contains the message text and user ID.
  * @param {Object} context The context object for the function call.
  * @returns {Object} shows status of operation and ID of the added message.

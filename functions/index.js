@@ -42,6 +42,6 @@ exports.updateLogs = updateLogs;
 exports.deleteLogs = deleteLogs;
 exports.getLogs = getLogs;
 
-// Import and export addMessage function
+// Import and export addMessage function (given in task 3)
 const {addMessage} = require("./api/addMessage");
 exports.addMessage = addMessage;
