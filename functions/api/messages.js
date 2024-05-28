@@ -57,7 +57,7 @@ const postMessage = functions.https.onCall(async (data, context) => {
         .collection("messages")
         .add(messageData);
     // Return a success message after successfully adding message data to database
-    return {status: "new message", chatId: newChatId, messageId: messageRef.id};
+    return {status: "new message has been added", chatId: newChatId, messageId: messageRef.id};
   } catch (error) {
     logger.log("Error adding message: ", error);
     // Throw an HTTP error with status "unknown" if an error occurs
