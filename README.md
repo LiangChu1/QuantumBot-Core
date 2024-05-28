@@ -21,19 +21,30 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installing
 
-1. Create a Firebase project through the Firebase console (make sure to also change the price plan to blaze "pay-to-go" plan)
-2. Open up a new terminal and begin with cloning the repository: `git clone <repository-url>`
-3. Navigate into the root project directory: `cd Rex-chatbot`
-4. Install dependencies: `npm install`
-5. Log in to Firebase CLI: `firebase login`
-6. Initialize Firebase: `firebase init`
-7. Select `Firestore` as the database and `Functions` as the setup for the api endpoints
-8. Select the option to use an existing project and to select the project that you created beforehand
-9. Hit enter to access the firestore rules as well as enter `y` to overwrite the current version to fit with the project you have
-10. Select javascript as the language and then hit enter for the rest of the options.
+1. First install Node.js, npm, and Firebase CLI tools onto your computer
+    - Use this link to install Node.js and npm: https://nodejs.org/en/download/package-manager
+    - To install Firebase CLI tools use the command: `npm install -g firebase-tools`
+2. Go to the Firebase console, create/sign-in to an account, and create a project through the console by first naming the project.
+3. Once the project is created, go to the project's settings and navigate to your apps. Select the web option, register a name to the app, enable Firebase Hosting for the app, click on 'register app', then click on 'continue' to navigate through the rest of the steps stated (these steps will be explained later on)
+4. Configure your Firebase project's Cloud FireStore database by clicking the "create database" button within Firestore, set the name and location as default, click next, and then secure the rules by starting the data structure in test mode, then click create.
+5. To gain access creating Cloud Functions on your Firebase project, upgrade your project's plan to the Blaze (pay-as-you-go) option, then click continue, then set a billing budget as you see fit, then click create.
+6. Open up a new terminal and begin with cloning the repository: `git clone <repository-url>`
+7. Navigate into the root project directory: `cd Rex-chatbot`
+8. Install dependencies: `npm install`
+9. Log in to Firebase CLI: `firebase login`
+10. Initialize Firebase: `firebase init`
+11. Select `Firestore` as the database and `Functions` as the setup for the api endpoints
+12. Select the option to use an existing project and to select the project that you created beforehand
+13. Hit enter to access the firestore.rules file and fire.indexes.json file
+14. Select javascript as the language to use to write the Cloud functions
+15. Enter `y` to use ESLint to catch any bugs before deploying said functions
+16. Enter `n` to don't overwrite the next four files (with are the package.json, .eslintrc.js, index.js, and .gitingore files)
+17. Enter `y` to then install the dependecies with npm
+18. Now your ready to deploy the functions to firebase!!!
 
-## Workflow diagram
-![workflow](QuantumBotCoreWorkFlow.drawio.png)
+## Deployment
+
+To deploy the functions to Firebase, run: `firebase deploy --only functions`
 
 ## Usage
 
@@ -56,9 +67,8 @@ The project includes the following Firebase Cloud Functions:
 - `deleteLogs`: Deletes a log event  based on its id.
 - `getLogs`: Retrieves a specific log event based on its id.
 
-## Deployment
-
-To deploy the functions to Firebase, run: `firebase deploy --only functions`
+## Workflow diagram
+![workflow](QuantumBotCoreWorkFlow.drawio.png)
 
 ## Testing
 
