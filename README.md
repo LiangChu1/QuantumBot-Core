@@ -50,11 +50,11 @@ To deploy the functions to Firebase, run: `firebase deploy --only functions`
 
 The project includes the following Firebase Cloud Functions:
 
-### user session management APIs
-- `login`: Logs in a user.
-- `logout`: Logs out a user.
-- `register`: Registers a new user.
-- `updateUserId`: Updates a user's ID.
+### chat room management APIs
+- `createChatRoom`: creates a new chat room that the user can engaged in a new conversation in.
+- `getAllChatRooms`: Retrieves all of the chat rooms that the user has made (shows chat rooms that are active and ended, but not deleted).
+- `updateChatRoomStatus`: Updates the status of whether a chat room is deemed active or has ended.
+- `deleteChatRoom`: Deletes a chat room that the user has made.
 
 ### message recepition APIs
 - `postMessage`: Posts a new message to a chat.

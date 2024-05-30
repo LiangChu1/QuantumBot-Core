@@ -56,6 +56,16 @@ const postMessage = functions.https.onCall(async (data, context) => {
         .doc(newChatId.toString())
         .collection("messages")
         .add(messageData);
+
+    // Updating the most recent message within the chat room field
+    await admin
+        .firestore()
+        .collection("users")
+        .doc(userId)
+        .collection("chats")
+        .doc(newChatId.toString())
+        .update({mostRecentMessage: text});
+
     // Return a success message after successfully adding message data to database
     return {status: "new message has been added", chatId: newChatId, messageId: messageRef.id};
   } catch (error) {
@@ -79,7 +89,7 @@ const postMessage = functions.https.onCall(async (data, context) => {
  * @returns {Object} - The status of the operation and the retrieved messages data.
  * @throws {functions.https.HttpsError} - If required fields are missing or an error occurs while retrieving the messages.
  */
-const getChat = functions.https.onRequest(async (req, res) => {
+const getChatMessages = functions.https.onRequest(async (req, res) => {
   try {
     logger.log("Receiving data of a specific user's chat", req);
     // Destructure the userId and chatId from the query object
@@ -103,7 +113,14 @@ const getChat = functions.https.onRequest(async (req, res) => {
         .doc(chatId.toString())
         .collection("messages")
         .get();
-    const messages = chatMessagesSnapshot.docs.map((doc) => doc.data());
+    const messages = chatMessagesSnapshot.docs.map((doc) => {
+      // Get the message data
+      const message = doc.data();
+      // Add the messageId to the message data
+      message.messageId = doc.id;
+      return message;
+    });
+
     // Return a success message after successfully retrieving messages data from database
     return res.status(200).json({status: "successfully got chat messages", messages: messages});
   } catch (error) {
@@ -116,58 +133,4 @@ const getChat = functions.https.onRequest(async (req, res) => {
   }
 });
 
-/**
- * This function is responsible for deleting all messages from a specific chat of a specific user from the Firestore database.
- * It expects a `userId` and `chatId` in the `req.query`.
- * If either of these properties is missing, it throws an error.
- * If the messages are successfully deleted, it returns a status message.
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- * @returns {Object} - The status of the operation.
- * @throws {functions.https.HttpsError} - If required fields are missing or an error occurs while deleting the messages.
- */
-const deleteChat = functions.https.onRequest(async (req, res) => {
-  try {
-    logger.log("Receiving data to delete messages", req);
-    // Destructure the userId and chatId from the query object
-    const userId = req.query.userId;
-    const chatId = req.query.chatId;
-    // Check if the required fields are present in the query object
-    if (!userId || !chatId) {
-      logger.log("Required fields are missing");
-      // Throw an HTTP error with status "required" if required fields are missing
-      throw new functions.https.HttpsError(
-          "invalid-argument",
-          "Required fields (ID's for user and chat) are missing",
-      );
-    }
-    // Delete all messages from the specified chat of the specified user
-    const chatMessagesSnapshot = await admin
-        .firestore()
-        .collection("users")
-        .doc(userId)
-        .collection("chats")
-        .doc(chatId.toString())
-        .collection("messages")
-        .get();
-
-    const batch = admin.firestore().batch();
-    chatMessagesSnapshot.forEach((doc) => {
-      batch.delete(doc.ref);
-    });
-
-    await batch.commit();
-    // Return a success message after successfully deleting messages data from database
-    return res.status(200).json({status: "successfully deleted chat messages"});
-  } catch (error) {
-    logger.error("Error fetching messages:", error);
-    // Return an error message if an error occurs while deleting messages data from database
-    throw new functions.https.HttpsError(
-        "unknown",
-        "An error occurred while deleted the messages",
-        error.message,
-    );
-  }
-});
-
-module.exports = {postMessage, getChat, deleteChat};
+module.exports = {postMessage, getChatMessages};

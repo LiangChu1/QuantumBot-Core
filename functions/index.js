@@ -5,28 +5,26 @@ admin.initializeApp();
 // Import message-related functions
 const {
   postMessage,
-  getChat,
-  deleteChat,
+  getChatMessages,
 } = require("./api/messages");
 
 // Export message-related functions
 exports.postMessage = postMessage;
-exports.getChat = getChat;
-exports.deleteChat = deleteChat;
+exports.getChatMessages = getChatMessages;
 
-// Import user-related functions
+// Import chat-room-related functions
 const {
-  login,
-  logout,
-  register,
-  updateUserId,
-} = require("./api/users");
+  getAllChatRooms,
+  createChatRoom,
+  deleteChatRoom,
+  updateChatRoomStatus,
+} = require("./api/chatRooms");
 
-// Export user-related functions
-exports.login = login;
-exports.logout = logout;
-exports.register = register;
-exports.updateUserId = updateUserId;
+// Export chat-room-related functions
+exports.getAllChatRooms = getAllChatRooms;
+exports.createChatRoom = createChatRoom;
+exports.deleteChatRoom = deleteChatRoom;
+exports.updateChatRoomStatus = updateChatRoomStatus;
 
 // Import log-related functions
 const {
@@ -41,7 +39,3 @@ exports.postLogs = postLogs;
 exports.updateLogs = updateLogs;
 exports.deleteLogs = deleteLogs;
 exports.getLogs = getLogs;
-
-// Import and export addMessage function (given in task 3)
-const {addMessage} = require("./api/addMessage");
-exports.addMessage = addMessage;
