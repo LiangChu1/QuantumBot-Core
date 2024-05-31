@@ -6,15 +6,18 @@ admin.initializeApp();
 const {
   postMessage,
   getChatMessages,
+  getAMessage,
 } = require("./api/messages");
 
 // Export message-related functions
 exports.postMessage = postMessage;
 exports.getChatMessages = getChatMessages;
+exports.getAMessage = getAMessage;
 
 // Import chat-room-related functions
 const {
   getAllChatRooms,
+  getAChatRoom,
   createChatRoom,
   deleteChatRoom,
   updateChatRoomStatus,
@@ -22,6 +25,7 @@ const {
 
 // Export chat-room-related functions
 exports.getAllChatRooms = getAllChatRooms;
+exports.getAChatRoom = getAChatRoom;
 exports.createChatRoom = createChatRoom;
 exports.deleteChatRoom = deleteChatRoom;
 exports.updateChatRoomStatus = updateChatRoomStatus;

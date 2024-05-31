@@ -53,13 +53,14 @@ The project includes the following Firebase Cloud Functions:
 ### chat room management APIs
 - `createChatRoom`: creates a new chat room that the user can engaged in a new conversation in.
 - `getAllChatRooms`: Retrieves all of the chat rooms that the user has made (shows chat rooms that are active and ended, but not deleted).
+- `getAChatRoom`: Retrieves a specific chat room that the user has made
 - `updateChatRoomStatus`: Updates the status of whether a chat room is deemed active or has ended.
 - `deleteChatRoom`: Deletes a chat room that the user has made.
 
-### message recepition APIs
+### message reception APIs
 - `postMessage`: Posts a new message to a chat.
-- `getChat`: Retrieves all messages from a specific chat of a specific user.
-- `deleteChat`: Deletes all messages from a specific chat of a specific user.
+- `getChatMessages`: Retrieves all messages from a specific chat of a specific user.
+- `getAMessage`: Gets a message from a specific chat of a specific user.
 
 ### log management APIs
 - `postLogs`: Posts a new log event for monitoring and troubleshooting.

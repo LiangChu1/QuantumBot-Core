@@ -5,6 +5,7 @@ const admin = require("firebase-admin");
 // Destructure the logger from functions
 const {logger} = functions;
 
+const cors = require("cors")({origin: true});
 /**
  * This function is responsible for creating a new message in a chat in the Firestore database.
  * It expects an object with `userId`, `text`, `senderId`, and `chatId` properties in the `data` parameter.
@@ -80,6 +81,59 @@ const postMessage = functions.https.onCall(async (data, context) => {
 });
 
 /**
+ * This function is responsible for retrieving a message from a specific chat of a specific user from the Firestore database.
+ * It expects a `userId`, `chatId`, and `messageId` in the `req.query`.
+ * If any of these properties is missing, it throws an error.
+ * If the message is successfully retrieved, it returns the messages data.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} - The status of the operation and the retrieved messages data.
+ * @throws {functions.https.HttpsError} - If required fields are missing or an error occurs while retrieving the messages.
+ */
+const getAMessage = functions.https.onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    try {
+      logger.log("Receiving data of a specific user's chat", req);
+      // Destructure the userId and chatId from the query object
+      const userId = req.query.userId;
+      const chatId = req.query.chatId;
+      const messageId = req.query.messageId;
+      // Check if the required fields are present in the query object
+      if (!userId || !chatId || !messageId) {
+        logger.log("Required fields are missing");
+        // Throw an HTTP error with status "required" if required fields are missing
+        throw new functions.https.HttpsError(
+            "invalid-argument",
+            "Required fields (ID's for user, chat room, and message) are missing",
+        );
+      }
+      // Retrieve the message data from the Firestore database
+      const doc = await admin
+          .firestore()
+          .collection("users")
+          .doc(userId)
+          .collection("chats")
+          .doc(chatId)
+          .collection("messages")
+          .doc(messageId)
+          .get();
+
+      const messageData = doc.data();
+      messageData.messageId = messageId;
+      return res.status(200).json({status: "successfully got message with id: " + messageId, messageData: messageData});
+    } catch (error) {
+      logger.log("Error getting chat room: ", error);
+      // Throw an HTTP error with status "unknown" if an error occurs
+      throw new functions.https.HttpsError(
+          "unknown",
+          "An error occurred while getting the chat room",
+          error.message,
+      );
+    }
+  });
+});
+
+/**
  * This function is responsible for retrieving all messages from a specific chat of a specific user from the Firestore database.
  * It expects a `userId` and `chatId` in the `req.query`.
  * If either of these properties is missing, it throws an error.
@@ -90,47 +144,49 @@ const postMessage = functions.https.onCall(async (data, context) => {
  * @throws {functions.https.HttpsError} - If required fields are missing or an error occurs while retrieving the messages.
  */
 const getChatMessages = functions.https.onRequest(async (req, res) => {
-  try {
-    logger.log("Receiving data of a specific user's chat", req);
-    // Destructure the userId and chatId from the query object
-    const userId = req.query.userId;
-    const chatId = req.query.chatId;
-    // Check if the required fields are present in the query object
-    if (!userId || !chatId) {
-      logger.log("Required fields are missing");
-      // Throw an HTTP error with status "required" if required fields are missing
+  cors(req, res, async () => {
+    try {
+      logger.log("Receiving data of a specific user's chat", req);
+      // Destructure the userId and chatId from the query object
+      const userId = req.query.userId;
+      const chatId = req.query.chatId;
+      // Check if the required fields are present in the query object
+      if (!userId || !chatId) {
+        logger.log("Required fields are missing");
+        // Throw an HTTP error with status "required" if required fields are missing
+        throw new functions.https.HttpsError(
+            "invalid-argument",
+            "Required fields (ID's for user and chat) are missing",
+        );
+      }
+      // Get the messages of a specific chat from the Firestore database
+      const chatMessagesSnapshot = await admin
+          .firestore()
+          .collection("users")
+          .doc(userId)
+          .collection("chats")
+          .doc(chatId.toString())
+          .collection("messages")
+          .get();
+      const messages = chatMessagesSnapshot.docs.map((doc) => {
+        // Get the message data
+        const message = doc.data();
+        // Add the messageId to the message data
+        message.messageId = doc.id;
+        return message;
+      });
+
+      // Return a success message after successfully retrieving messages data from database
+      return res.status(200).json({status: "successfully got chat messages", messages: messages});
+    } catch (error) {
+      logger.error("Error fetching messages:", error);
       throw new functions.https.HttpsError(
-          "invalid-argument",
-          "Required fields (ID's for user and chat) are missing",
+          "unknown",
+          "An error occurred while get a specific chat",
+          error.message,
       );
     }
-    // Get the messages of a specific chat from the Firestore database
-    const chatMessagesSnapshot = await admin
-        .firestore()
-        .collection("users")
-        .doc(userId)
-        .collection("chats")
-        .doc(chatId.toString())
-        .collection("messages")
-        .get();
-    const messages = chatMessagesSnapshot.docs.map((doc) => {
-      // Get the message data
-      const message = doc.data();
-      // Add the messageId to the message data
-      message.messageId = doc.id;
-      return message;
-    });
-
-    // Return a success message after successfully retrieving messages data from database
-    return res.status(200).json({status: "successfully got chat messages", messages: messages});
-  } catch (error) {
-    logger.error("Error fetching messages:", error);
-    throw new functions.https.HttpsError(
-        "unknown",
-        "An error occurred while get a specific chat",
-        error.message,
-    );
-  }
+  });
 });
 
-module.exports = {postMessage, getChatMessages};
+module.exports = {postMessage, getChatMessages, getAMessage};
