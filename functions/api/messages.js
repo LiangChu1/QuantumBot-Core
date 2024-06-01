@@ -58,14 +58,22 @@ const postMessage = functions.https.onCall(async (data, context) => {
         .collection("messages")
         .add(messageData);
 
-    // Updating the most recent message within the chat room field
-    await admin
+    // Get the reference to the chat document
+    const chatDocRef = admin
         .firestore()
         .collection("users")
         .doc(userId)
         .collection("chats")
-        .doc(newChatId.toString())
-        .update({mostRecentMessage: text});
+        .doc(newChatId.toString());
+
+    // Get the chat document
+    const chatDoc = await chatDocRef.get();
+
+    // Get the current totalMessages count
+    const totalMessages = chatDoc.data().totalMessages;
+
+    // Now you can increment totalMessages and update the chat document
+    await chatDocRef.update({mostRecentMessage: text, totalMessages: totalMessages + 1});
 
     // Return a success message after successfully adding message data to database
     return {status: "new message has been added", chatId: newChatId, messageId: messageRef.id};

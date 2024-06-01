@@ -37,6 +37,7 @@ const createChatRoom = functions.https.onCall(async (data, context) => {
       created_at: admin.firestore.FieldValue.serverTimestamp(),
       isActive: true,
       mostRecentMessage: null,
+      totalMessages: 0,
     };
     // Create a new chat room document in the Firestore database
     const chatRef = await admin
