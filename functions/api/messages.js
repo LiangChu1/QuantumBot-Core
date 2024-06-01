@@ -30,7 +30,7 @@ const postMessage = functions.https.onCall(async (data, context) => {
           "Required fields (text or ID's for sender or receiver) are missing",
       );
     }
-    // Check to see if the message that being sent, belongs to a specific chat room (baed on chatId)
+    // Check to see if the message that being sent, belongs to a specific chat room (based on chatId)
     let newChatId = chatId;
     if (!newChatId) {
       newChatId = admin
